@@ -339,18 +339,47 @@ if [[ "${#UNKNOWN_PACKAGES[@]:-0}" -gt 0 ]]; then
     warning "Unresolved packages (install manually): ${UNKNOWN_PACKAGES[*]}"
 fi
 
-# zshel
+# --------------------------------------------------
+# zsh-shift-select plugin
+# --------------------------------------------------
 
-git clone https://github.com/jirutka/zsh-shift-select.git ~/.zsh/zsh-shift-select
+if [[ ! -d "$HOME/.zsh/zsh-shift-select" ]]; then
+    info "Installing zsh-shift-select..."
+    if git clone https://github.com/jirutka/zsh-shift-select.git "$HOME/.zsh/zsh-shift-select"; then
+        success "zsh-shift-select installed."
+    else
+        warning "Failed to clone zsh-shift-select."
+    fi
+else
+    info "zsh-shift-select already installed; skipping."
+fi
 
-# Nordic
-git clone https://github.com/EliverLara/Nordic.git
-mkdir -p ~/.themes
-mv Nordic ~/.themes/
+# --------------------------------------------------
+# Nordic GTK theme
+# --------------------------------------------------
 
-ln -s ~/.themes/Nordic/assets ~/.config/gtk-4.0/assets
-ln -s ~/.themes/Nordic/gtk-4.0/gtk.css ~/.config/gtk-4.0/gtk.css
-ln -s ~/.themes/Nordic/gtk-4.0/gtk-dark.css ~/.config/gtk-4.0/gtk-dark.css
+if [[ ! -d "$HOME/.themes/Nordic" ]]; then
+    info "Installing Nordic theme..."
+    NORDIC_BUILD_DIR="$(mktemp -d)"
+
+    if git clone https://github.com/EliverLara/Nordic.git "$NORDIC_BUILD_DIR/Nordic"; then
+        mkdir -p "$HOME/.themes"
+        mv "$NORDIC_BUILD_DIR/Nordic" "$HOME/.themes/"
+        success "Nordic theme installed."
+    else
+        warning "Failed to clone Nordic theme."
+    fi
+
+    rm -rf "$NORDIC_BUILD_DIR"
+else
+    info "Nordic theme already installed; skipping."
+fi
+
+if [[ -d "$HOME/.themes/Nordic" ]]; then
+    ln -sfn "$HOME/.themes/Nordic/assets" "$CONFIG_DIR/gtk-4.0/assets"
+    ln -sfn "$HOME/.themes/Nordic/gtk-4.0/gtk.css" "$CONFIG_DIR/gtk-4.0/gtk.css"
+    ln -sfn "$HOME/.themes/Nordic/gtk-4.0/gtk-dark.css" "$CONFIG_DIR/gtk-4.0/gtk-dark.css"
+fi
 
 printf '\n'
 warning "Log out and back into Hyprland for the changes to fully take effect."
