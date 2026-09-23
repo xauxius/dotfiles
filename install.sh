@@ -273,8 +273,8 @@ fi
 if [[ -d "$REPO_DIR/Wallpapers" ]]; then
     info "Installing wallpapers..."
 
-    mkdir -p "$HOME/Pictures/Wallpapers"
-    cp -a "$REPO_DIR/Wallpapers/." "$HOME/Pictures/Wallpapers/"
+    mkdir -p "$HOME/media/images/wallpapers"
+    cp -a "$REPO_DIR/Wallpapers/." "$HOME/media/images/wallpapers/"
 
     success "Wallpapers installed."
 fi

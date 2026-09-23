@@ -7,17 +7,22 @@ local home = os.getenv("HOME")
 local menu = "rofi -show drun"
 
 -- Launchers
-hl.bind(mainMod .. " + T", hl.dsp.exec_cmd(terminal))
-hl.bind(mainMod .. " + D", hl.dsp.exec_cmd("pgrep -x rofi >/dev/null && pkill -x rofi || " .. menu))
-hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager))
+hl.bind(mainMod .. " + Q", hl.dsp.exec_cmd(terminal))
+hl.bind(mainMod .. " + R", hl.dsp.exec_cmd("pgrep -x rofi >/dev/null && pkill -x rofi || " .. menu))
+hl.bind(mainMod .. " + E", hl.dsp.exec_cmd(fileManager, { float = true }))
 hl.bind(mainMod .. " + B", hl.dsp.exec_cmd(browser))
+hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("code"))
+hl.bind(mainMod .. " + period", hl.dsp.exec_cmd("code ~/.config/"))
+hl.bind(mainMod .. " + H", hl.dsp.exec_cmd("code ~/.config/hypr/"))
 
-hl.bind(mainMod .. " + Q", hl.dsp.window.close())
-hl.bind("SUPER + Tab", hl.dsp.exec_cmd("hyprlock"))
-hl.bind(mainMod .. " + GRAVE", hl.dsp.exec_cmd("pgrep -x wlogout >/dev/null || wlogout -b 1 -c 20 -r 20 -L 1700 -R 1700 -T 325 -B 325"))
+-- hl.bind(mainMod .. " + TAB", hl.plugin.scrolloverview.overview("toggle"))
+
+hl.bind(mainMod .. " + C", hl.dsp.window.close())
+hl.bind("SUPER + L", hl.dsp.exec_cmd("hyprlock"))
+hl.bind(mainMod .. " + Escape", hl.dsp.exec_cmd("pgrep -x wlogout >/dev/null || wlogout -b 1 -c 20 -r 20 -L 1700 -R 1700 -T 325 -B 325"))
 hl.bind(mainMod .. " + I", hl.dsp.exec_cmd("qs ipc call settings toggle"))
 
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("qs -n -p ~/.config/quickshell/hyprquickpaper"))
+hl.bind(mainMod .. " + P", hl.dsp.exec_cmd("qs -n -p ~/.config/quickshell/hyprquickpaper"))
 
 hl.bind(mainMod .. " + F", hl.dsp.window.fullscreen({ mode = 0 }))
 
@@ -26,19 +31,17 @@ hl.bind(mainMod .. " + O", hl.dsp.exec_cmd(home .. "/.config/hypr/scripts/opacit
 -- Mouse move/resize window
 hl.bind(mainMod .. " + mouse:272", hl.dsp.window.drag(), { mouse = true })
 hl.bind(mainMod .. " + mouse:273", hl.dsp.window.resize(), { mouse = true })
+hl.bind(mainMod .. " + X", hl.dsp.workspace.swap_monitors({ monitor1 = "HDMI-A-1", monitor2 = "HDMI-A-2" }))
 
 -- Toggle waybar
-hl.bind(mainMod .. " + SHIFT + W", hl.dsp.exec_cmd("sh -c 'pgrep -x waybar >/dev/null && pkill waybar || nohup waybar >/dev/null 2>&1 &'"))
+hl.bind(mainMod .. " + TAB", hl.dsp.exec_cmd("sh -c 'pgrep -x waybar >/dev/null && pkill waybar || nohup waybar >/dev/null 2>&1 &'"))
 
 -- Clipboard
 hl.bind(mainMod .. " + V", hl.dsp.exec_cmd("pgrep -x rofi >/dev/null && pkill -x rofi || cliphist list | rofi -dmenu -p '' | cliphist decode | wl-copy"))
 
 -- Screenshots
-hl.bind(mainMod .. " + Delete", hl.dsp.exec_cmd("grim " .. home .. "/Pictures/$(date +%s).png"))
-hl.bind("Delete", hl.dsp.exec_cmd('grim -g "$(slurp)" ' .. home .. '/Pictures/$(date +%s).png'))
 
--- Keyboard layout
-hl.bind(mainMod .. " + X", hl.dsp.exec_cmd("hyprctl switchxkblayout current next"))
+hl.bind(mainMod .. " + SHIFT + S", hl.dsp.exec_cmd("hyprshot -m region --clipboard-only"))
 
 -- Toggle float window, center and rezise
 hl.bind(mainMod .. " + Space", function()
@@ -66,7 +69,7 @@ hl.bind(mainMod .. " + Space", function()
 end)
 
 -- Gpu screen recorder
-hl.bind(mainMod .. " + R", hl.dsp.exec_cmd(
+hl.bind(mainMod .. " + M", hl.dsp.exec_cmd(
     "bash -c 'PIDFILE=/tmp/osu-gsr.pid; if [ -f \"$PIDFILE\" ] && kill -0 \"$(cat \"$PIDFILE\")\" 2>/dev/null; then kill -INT \"$(cat \"$PIDFILE\")\"; rm -f \"$PIDFILE\"; else mkdir -p ~/Videos; gpu-screen-recorder -w HDMI-A-1 -f 60 -a default_output -o ~/Videos/$(date +%Y-%m-%d_%H-%M-%S).mp4 & echo $! > \"$PIDFILE\"; fi'"
 ))
 
@@ -91,12 +94,6 @@ hl.bind(mainMod .. " + code:86", function() zoomfunction(0.3) end, { repeating =
 -- VERIFY: exit dispatcher. Docs explicitly say to double check the exit
 -- dispatcher call when moving to Lua.
 hl.bind(mainMod .. " + SHIFT + E", hl.dsp.exit())
-
--- Focus (H/J/K/L = left/down/up/right, vim-style, matching your original)
-hl.bind(mainMod .. " + H", hl.dsp.focus({ direction = "left" }))
-hl.bind(mainMod .. " + J", hl.dsp.focus({ direction = "down" }))
-hl.bind(mainMod .. " + K", hl.dsp.focus({ direction = "up" }))
-hl.bind(mainMod .. " + L", hl.dsp.focus({ direction = "right" }))
 
 -- VERIFY: move active window within layout (old `movewindow` dispatcher).
 -- Confirmed pattern is hl.dsp.window.move({ workspace = N }) for sending to a

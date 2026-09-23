@@ -11,7 +11,7 @@ hl.layer_rule({
 -- Opacity rules: 90% for all windows except fullscreen
 hl.window_rule({
     match = { class = ".*" },
-    opacity = "0.9 override",
+    opacity = "1.0 override",
 })
 
 hl.window_rule({
@@ -21,7 +21,7 @@ hl.window_rule({
 
 hl.window_rule({
     name = "float-pavucontrol",
-    match = { class = "^(pavucontrol)$" },
+    match = { class = "^(org.pulseaudio.pavucontrol)$" },
     float = true,
 })
 
@@ -47,4 +47,19 @@ hl.window_rule({
     name = "float-save-file",
     match = { title = "^(Save File)$" },
     float = true,
+})
+
+hl.window_rule({
+    name = "thunar-opacity",
+    match = {
+        class = "thunar",
+    },
+    opacity = 0.7,
+})
+
+hl.window_rule({ 
+    match = { 
+        class = "^(python3)$" 
+    }, 
+    float = true 
 })

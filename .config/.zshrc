@@ -3,7 +3,7 @@ eval "$(starship init zsh)"
 # Monochrome eza
 export EZA_COLORS="uu=bright-black:gu=bright-black:da=bright-black:ur=white:uw=bright-black:ux=white:ue=bright-black:gr=bright-black:gw=bright-black:gx=white:tr=bright-black:fi=white:di=bright-white:ln=bright-black:pi=bright-black:so=bright-black:bd=bright-black:cd=bright-black:or=bright-black:mi=bright-black:ex=white"
 
-alias ls='eza --icons'
+alias ls='eza --icons=auto'
 alias ll='eza -lah --icons --git'
 alias la='eza -a --icons'
 alias lt='eza --tree --icons'
@@ -46,3 +46,18 @@ ZSH_HIGHLIGHT_STYLES[path]='fg=245'
 ZSH_HIGHLIGHT_STYLES[comment]='fg=240'
 ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=245'
 
+
+[ -f /opt/miniconda3/etc/profile.d/conda.sh ] && source /opt/miniconda3/etc/profile.d/conda.sh
+
+export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/bin:$HOME/bin/claude:$PATH"
+
+# Navigation
+bindkey "^[[1;5C" forward-word
+bindkey "^[[1;5D" backward-word
+
+bindkey "^H" backward-kill-word      # ctrl+backspace (often sends ^H or ^?)
+bindkey "^[[3;5~" kill-word          # ctrl+delete
+
+# Select
+source ~/.zsh/zsh-shift-select/zsh-shift-select.plugin.zsh

@@ -34,7 +34,8 @@ hl.env("MOZ_ENABLE_WAYLAND", "1")
 
 hl.config({
     input = {
-        kb_layout = "us,latam",
+        kb_layout  = "us,lt",
+        kb_options = "grp:alt_shift_toggle",
         follow_mouse = 1,
         sensitivity = 0.5,
         touchpad = {
@@ -83,9 +84,19 @@ hl.animation({ leaf = "border",     enabled = true, speed = 5, bezier = "default
 hl.animation({ leaf = "fade",       enabled = true, speed = 4, bezier = "default" })
 hl.animation({ leaf = "workspaces", enabled = true, speed = 7, bezier = "default", style = "slidefade" })
 
+hl.config({
+  cursor = {
+    inactive_timeout = 2,  -- seconds before cursor hides; 0 disables hiding
+    no_hardware_cursors = true,
+  }
+})
+
 -- LAYOUT
 hl.config({
-    dwindle = { preserve_split = true },
+    dwindle = {
+        force_split = 2,   -- 0 = follows mouse, 1 = new goes left/top, 2 = new goes right/bottom 
+        preserve_split = true 
+    },
 })
 hl.config({
     master = { new_status = "master" },
@@ -104,6 +115,7 @@ hl.config({
 require("monitors")
 require("keybinds")
 require("rules")
+require("plugins")
 
 local ok, err = pcall(require, "hyprland-gui")
 if not ok then
