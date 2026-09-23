@@ -339,6 +339,19 @@ if [[ "${#UNKNOWN_PACKAGES[@]:-0}" -gt 0 ]]; then
     warning "Unresolved packages (install manually): ${UNKNOWN_PACKAGES[*]}"
 fi
 
+# zshel
+
+git clone https://github.com/jirutka/zsh-shift-select.git ~/.zsh/zsh-shift-select
+
+# Nordic
+git clone https://github.com/EliverLara/Nordic.git
+mkdir -p ~/.themes
+mv Nordic ~/.themes/
+
+ln -s ~/.themes/Nordic/assets ~/.config/gtk-4.0/assets
+ln -s ~/.themes/Nordic/gtk-4.0/gtk.css ~/.config/gtk-4.0/gtk.css
+ln -s ~/.themes/Nordic/gtk-4.0/gtk-dark.css ~/.config/gtk-4.0/gtk-dark.css
+
 printf '\n'
 warning "Log out and back into Hyprland for the changes to fully take effect."
 

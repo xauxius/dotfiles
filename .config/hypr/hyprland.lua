@@ -115,7 +115,6 @@ hl.config({
 require("monitors")
 require("keybinds")
 require("rules")
-require("plugins")
 
 local ok, err = pcall(require, "hyprland-gui")
 if not ok then
