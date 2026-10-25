@@ -4,9 +4,95 @@
     "exclusive": true, // "false" 
     "spacing": 0,
 
-    "modules-left": ["cpu", "custom/gpu", "memory", "temperature"],
+    "modules-left": ["cpu", "custom/gpu", "memory", "temperature", "group/workspaces"],
     "modules-center": ["clock"],
-    "modules-right": ["custom/mpris-marquee", "pulseaudio", "custom/power"],
+    "modules-right": ["custom/mpris-marquee", "pulseaudio", "bluetooth", "custom/network", "hyprland/language", "custom/power"],
+
+    // Workspace overview: workspaces.py writes one file per slot and signals waybar (RTMIN+9)
+    "group/workspaces": {
+        "orientation": "horizontal",
+        "modules": [
+            "custom/ws-daemon",
+            "custom/ws-1",
+            "custom/ws-2",
+            "custom/ws-3",
+            "custom/ws-4",
+            "custom/ws-5",
+            "custom/ws-6",
+            "custom/ws-7",
+            "custom/ws-8"
+        ]
+    },
+
+    "custom/ws-daemon": {
+        "exec": "~/.config/waybar/scripts/workspaces.py",
+        "format": "",
+        "tooltip": false
+    },
+
+    "custom/ws-1": {
+        "exec": "cat \"$XDG_RUNTIME_DIR/waybar-ws/$WAYBAR_OUTPUT_NAME-1.json\" 2>/dev/null",
+        "return-type": "json",
+        "interval": "once",
+        "signal": 9,
+        "on-click": "~/.config/waybar/scripts/ws-click.sh 1"
+    },
+
+    "custom/ws-2": {
+        "exec": "cat \"$XDG_RUNTIME_DIR/waybar-ws/$WAYBAR_OUTPUT_NAME-2.json\" 2>/dev/null",
+        "return-type": "json",
+        "interval": "once",
+        "signal": 9,
+        "on-click": "~/.config/waybar/scripts/ws-click.sh 2"
+    },
+
+    "custom/ws-3": {
+        "exec": "cat \"$XDG_RUNTIME_DIR/waybar-ws/$WAYBAR_OUTPUT_NAME-3.json\" 2>/dev/null",
+        "return-type": "json",
+        "interval": "once",
+        "signal": 9,
+        "on-click": "~/.config/waybar/scripts/ws-click.sh 3"
+    },
+
+    "custom/ws-4": {
+        "exec": "cat \"$XDG_RUNTIME_DIR/waybar-ws/$WAYBAR_OUTPUT_NAME-4.json\" 2>/dev/null",
+        "return-type": "json",
+        "interval": "once",
+        "signal": 9,
+        "on-click": "~/.config/waybar/scripts/ws-click.sh 4"
+    },
+
+    "custom/ws-5": {
+        "exec": "cat \"$XDG_RUNTIME_DIR/waybar-ws/$WAYBAR_OUTPUT_NAME-5.json\" 2>/dev/null",
+        "return-type": "json",
+        "interval": "once",
+        "signal": 9,
+        "on-click": "~/.config/waybar/scripts/ws-click.sh 5"
+    },
+
+    "custom/ws-6": {
+        "exec": "cat \"$XDG_RUNTIME_DIR/waybar-ws/$WAYBAR_OUTPUT_NAME-6.json\" 2>/dev/null",
+        "return-type": "json",
+        "interval": "once",
+        "signal": 9,
+        "on-click": "~/.config/waybar/scripts/ws-click.sh 6"
+    },
+
+    "custom/ws-7": {
+        "exec": "cat \"$XDG_RUNTIME_DIR/waybar-ws/$WAYBAR_OUTPUT_NAME-7.json\" 2>/dev/null",
+        "return-type": "json",
+        "interval": "once",
+        "signal": 9,
+        "on-click": "~/.config/waybar/scripts/ws-click.sh 7"
+    },
+
+    "custom/ws-8": {
+        "exec": "cat \"$XDG_RUNTIME_DIR/waybar-ws/$WAYBAR_OUTPUT_NAME-8.json\" 2>/dev/null",
+        "return-type": "json",
+        "interval": "once",
+        "signal": 9,
+        "on-click": "~/.config/waybar/scripts/ws-click.sh 8"
+    },
 
     "cpu": {
         "interval": 1,
@@ -41,8 +127,11 @@
     "clock": {
         "format": "{:%H:%M}",
         "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        "on-click": "mode",
         "calendar": {
             "mode": "month",
+            "mode-mons": "month",
+            "on-scroll": 1,
             "format": {
                 "today": "<b><u>{}</u></b>"
             }
@@ -65,8 +154,35 @@
             "default": ["", "", ""]
         },
         "tooltip": false,
-        "on-click": "pavucontrol",
+        "max-volume": 100,
+        "on-click": "~/.config/waybar/scripts/sound-menu.py",
         "on-click-right": "wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"
+    },
+
+    "bluetooth": {
+        "format": "󰂯",
+        "format-off": "󰂲",
+        "format-disabled": "󰂲",
+        "format-no-controller": "",
+        "format-connected": "󰂱 {num_connections}",
+        "tooltip-format": "Bluetooth: {status}\nNo devices connected",
+        "tooltip-format-off": "Bluetooth: off",
+        "tooltip-format-connected": "{device_enumerate}",
+        "tooltip-format-enumerate-connected": "{device_alias}",
+        "tooltip-format-enumerate-connected-battery": "{device_alias}  󰁹 {device_battery_percentage}%",
+        "on-click": "~/.config/waybar/scripts/bluetooth-menu.py"
+    },
+
+    "custom/network": {
+        "exec": "~/.config/waybar/scripts/network-status.py",
+        "return-type": "json",
+        "format": "{}",
+        "on-click": "~/.config/waybar/scripts/network-menu.py"
+    },
+
+    "hyprland/language": {
+        "format": "{short}",
+        "tooltip": false
     },
 
     "custom/power": {

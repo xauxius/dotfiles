@@ -34,6 +34,8 @@ Wallpapers: https://wallhaven.cc/user/43pr
 ## Features
 
 * **Waybar** > Change volume with mouse wheel, mute, play/pause, next and blue light filter
+* **Waybar popups** > Sound (output/input device and volume, per-app volume), Network (Wi-Fi, saved connections, hotspot) and Bluetooth (connected / remembered / nearby devices)
+* **Workspace overview** > Workspaces of the current group, color coded by monitor, with the icon of the app in each
 * **Rofi** > App search, clipboard history and switch opacity
 * **Zsh shell + starship** (Customizable command-line shell)
 * **Custom wallpaper selector** (Awww + Quickshell)
@@ -60,8 +62,11 @@ Just made some tweaks to it. Give it some love: [hyprquickpaper](https://github.
 | -----------             | ------------------------- |
 | `Super + T`             | Terminal                  |
 | `Super + Q`             | Close active window       |
-| `Super + 1, 2, 3..`     | Change workspaces         |
-| `Super + Shift + 1, 2..`| Move window to workspace  |
+| `Super + 1..8`          | Change workspace (current group) |
+| `Super + 9, 0`          | Global workspaces (shared by all groups) |
+| `Super + Shift + 1..0`  | Move window to workspace  |
+| `Super + F1..F4`        | Switch workspace group    |
+| `Super + Ctrl + 1, 2`   | Bring workspace to monitor 1 / 2 |
 | `Super + D`             | Application launcher      |
 | `Super + E`             | File manager              |
 | `Super + B`             | Browser                   |

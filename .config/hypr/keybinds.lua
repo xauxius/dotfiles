@@ -111,13 +111,8 @@ hl.bind(mainMod .. " + CTRL + L", hl.dsp.window.resize({ x = 40, y = 0 }), { rep
 hl.bind(mainMod .. " + CTRL + K", hl.dsp.window.resize({ x = 0, y = -40 }), { repeating = true })
 hl.bind(mainMod .. " + CTRL + J", hl.dsp.window.resize({ x = 0, y = 40 }), { repeating = true })
 
--- Workspaces 1-10, and move-to-workspace with SHIFT (confirmed pattern from
--- the official example config)
-for i = 1, 10 do
-    local key = i % 10 -- 10 maps to key 0
-    hl.bind(mainMod .. " + " .. key, hl.dsp.focus({ workspace = i }))
-    hl.bind(mainMod .. " + SHIFT + " .. key, hl.dsp.window.move({ workspace = i }))
-end
+-- Workspaces (SUPER + 1-8 in the current group, 9/0 global, + SHIFT to move a window),
+-- groups (F1-F4) and bring-workspace-to-monitor (CTRL + 1/2) live in workspaces.lua
 
 -- Media keys (confirmed pattern from the official example config)
 hl.bind("XF86AudioRaiseVolume", hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+"), { locked = true, repeating = true })
