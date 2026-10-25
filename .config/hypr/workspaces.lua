@@ -6,8 +6,7 @@
 -- inside the current group. SUPER + 9 / 0 are global workspaces (ids 99 / 100) that
 -- belong to no group and are reachable from anywhere.
 --
--- Every workspace remembers the monitor it was last on; opening an empty one puts it
--- back there. Waybar (scripts/workspaces.py) reads the same state from STATE_FILE.
+-- The current group is written to STATE_FILE for waybar (scripts/workspaces.py).
 --
 -- SUPER + CTRL + 1/2 brings the current workspace to monitor 1/2 (numbered left to
 -- right); the monitor it left shows the workspace that was last active there.
@@ -20,7 +19,6 @@ local STATE_FILE = (os.getenv("XDG_RUNTIME_DIR") or "/tmp") .. "/hypr-workspaces
 local current = 1     -- current group
 local history = {}    -- monitor name -> workspace ids, most recent first
 local group_last = {} -- group -> monitor name -> last active workspace id
-local ws_monitor = {} -- workspace id -> monitor name it was last on
 
 local function group_of(id)
     if id < 1 or id > GROUPS * GROUP_SIZE then return nil end -- global/special
@@ -60,20 +58,11 @@ local function write_state()
     local f = io.open(STATE_FILE .. ".tmp", "w")
     if f == nil then return end
     f:write("group " .. current .. "\n")
-    for id, name in pairs(ws_monitor) do
-        f:write("ws " .. id .. " " .. name .. "\n")
-    end
     f:close()
     os.rename(STATE_FILE .. ".tmp", STATE_FILE)
 end
 
 local function remember()
-    for _, ws in ipairs(hl.get_workspaces()) do
-        if ws.id > 0 and ws.monitor ~= nil then
-            ws_monitor[ws.id] = ws.monitor.name
-        end
-    end
-
     local active = hl.get_active_workspace()
     if active ~= nil and group_of(active.id) ~= nil then
         current = group_of(active.id)
@@ -101,21 +90,11 @@ local function remember()
 end
 
 hl.on("workspace.active", remember)
-hl.on("workspace.created", remember)
 hl.on("workspace.move_to_monitor", remember)
 hl.on("monitor.focused", remember)
 
--- Focus a workspace; an empty one opens on the monitor it was last on.
 local function open(id)
-    local home = ws_monitor[id]
-    local active = hl.get_active_monitor()
-    if hl.get_workspace(id) == nil and home ~= nil and hl.get_monitor(home) ~= nil
-        and (active == nil or active.name ~= home) then
-        hl.dispatch(hl.dsp.focus({ monitor = home }))
-        hl.dispatch(hl.dsp.focus({ workspace = id, on_current_monitor = true }))
-    else
-        hl.dispatch(hl.dsp.focus({ workspace = id }))
-    end
+    hl.dispatch(hl.dsp.focus({ workspace = id }))
 end
 
 local function slot_id(key)
@@ -149,16 +128,7 @@ local function switch_group(g)
                 end
             end
         end
-        -- 3. an empty one that was last on this monitor, else any empty one
-        if target == nil then
-            for i = 1, GROUP_SIZE do
-                local id = base_of(g) + i
-                if not taken[id] and hl.get_workspace(id) == nil and ws_monitor[id] == m.name then
-                    target = id
-                    break
-                end
-            end
-        end
+        -- 3. a fresh, empty one
         target = target or free_id(g, taken)
         taken[target] = true
         table.insert(plan, { monitor = m.name, workspace = target })

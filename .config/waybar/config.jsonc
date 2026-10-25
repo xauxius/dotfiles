@@ -17,6 +17,7 @@
             "custom/ws-2",
             "custom/ws-3",
             "custom/ws-4",
+            "custom/ws-sep",
             "custom/ws-5",
             "custom/ws-6",
             "custom/ws-7",
@@ -27,6 +28,11 @@
     "custom/ws-daemon": {
         "exec": "~/.config/waybar/scripts/workspaces.py",
         "format": "",
+        "tooltip": false
+    },
+
+    "custom/ws-sep": {
+        "format": " ",
         "tooltip": false
     },
 

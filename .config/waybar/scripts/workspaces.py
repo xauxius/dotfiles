@@ -6,9 +6,8 @@ it writes one JSON file per (bar output, slot) and signals waybar, whose
 "custom/ws-N" modules just `cat` their file. That way every workspace is a real
 module: rounded boxes, CSS classes per monitor, and its own on-click.
 
-Slots are 1-8 of the current group. The group and the monitor each workspace was last
-on come from the state file written by ~/.config/hypr/workspaces.lua, so empty
-workspaces keep their monitor color.
+Slots are 1-8 of the current group, which comes from the state file written by
+~/.config/hypr/workspaces.lua.
 """
 
 import fcntl
@@ -79,19 +78,16 @@ def esc(text):
     return text.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
-def read_state():
-    group, ws_monitor = 1, {}
+def read_group():
     try:
         with open(STATE_FILE) as f:
             for line in f:
                 parts = line.split()
                 if parts[:1] == ["group"]:
-                    group = int(parts[1])
-                elif parts[:1] == ["ws"] and len(parts) == 3:
-                    ws_monitor[int(parts[1])] = parts[2]
+                    return int(parts[1])
     except (OSError, ValueError, IndexError):
         pass
-    return group, ws_monitor
+    return 1
 
 
 def state_mtime():
@@ -109,8 +105,7 @@ def render():
     mon_index = {m["name"]: i + 1 for i, m in enumerate(monitors)}
     visible = {m["activeWorkspace"]["id"] for m in monitors}
     focused = next((m["activeWorkspace"]["id"] for m in monitors if m.get("focused")), 1)
-    group, ws_monitor = read_state()
-    base = (group - 1) * GROUP_SIZE
+    base = (read_group() - 1) * GROUP_SIZE
 
     windows = {}
     for c in clients:
@@ -122,7 +117,7 @@ def render():
         for slot in range(1, GROUP_SIZE + 1):
             ws_id = base + slot
             ws = workspaces.get(ws_id)
-            home = ws["monitor"] if ws else ws_monitor.get(ws_id)
+            home = ws["monitor"] if ws else None
             wins = sorted(windows.get(ws_id, []), key=lambda c: (c["at"][0], c["at"][1]))
             # The leftmost window represents the workspace.
             icon = icon_for(wins[0]["class"]) if wins else ""
@@ -130,6 +125,9 @@ def render():
             if icon:
                 text += f" {icon}"
             classes = ["ws", f"mon{mon_index[home]}" if home in mon_index else "nomon"]
+            # Belongs to this bar's monitor; empty workspaces only while shown there.
+            if home == mon["name"] and (wins or ws_id in visible):
+                classes.append("here")
             if ws_id in visible:
                 classes.append("visible")
             if ws_id == focused:

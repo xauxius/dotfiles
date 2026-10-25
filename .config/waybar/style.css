@@ -32,18 +32,15 @@ window#waybar {
     margin: 4px 6px 2px 0;
 }
 
-/* Workspaces
-   Monitor colors: HDMI-A-1 = blue (mon1), HDMI-A-2 = orange (mon2).
-   The workspace box is outlined in the color of the bar's own monitor. */
+/* Workspaces (monochrome)
+   On each bar: its monitor's active workspace is light gray, the monitor's other
+   workspaces a darker gray, workspaces of other monitors only faintly shaded. */
 #workspaces {
     margin: 2px 4px 2px 6px;
     padding: 0 2px;
     border-radius: 9px;
-    border: 1px solid transparent;
+    border: 1px solid rgba(255, 255, 255, 0.25);
 }
-
-window#waybar.HDMI-A-1 #workspaces { border-color: rgba(122, 162, 247, 0.45); }
-window#waybar.HDMI-A-2 #workspaces { border-color: rgba(255, 158, 100, 0.45); }
 
 .ws {
     padding: 0 7px;
@@ -51,22 +48,30 @@ window#waybar.HDMI-A-2 #workspaces { border-color: rgba(255, 158, 100, 0.45); }
     min-width: 10px;
     border-radius: 7px;
     font-size: 13px;
+    color: rgba(255, 255, 255, 0.55);
+    background-color: rgba(255, 255, 255, 0.06);
     transition: background-color 0.15s ease;
 }
 
-/* gap between 1-4 and 5-8 */
-#custom-ws-4 { margin-right: 8px; }
+/* faint divider between 1-4 and 5-8 */
+#custom-ws-sep {
+    font-size: 1px;
+    min-width: 1px;
+    padding: 0;
+    margin: 6px 4px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
 
-.ws.nomon { background-color: rgba(255, 255, 255, 0.08); }
-.ws.mon1  { background-color: rgba(122, 162, 247, 0.3); }
-.ws.mon2  { background-color: rgba(255, 158, 100, 0.3); }
+.ws.here {
+    color: #ffffff;
+    background-color: rgba(255, 255, 255, 0.28);
+}
 
-/* active (shown on its monitor) */
-.ws.mon1.visible { background-color: rgba(122, 162, 247, 0.85); }
-.ws.mon2.visible { background-color: rgba(255, 158, 100, 0.85); }
+.ws.here.visible {
+    color: #202020;
+    background-color: #d8d8d8;
+}
 
-.ws.empty { color: rgba(255, 255, 255, 0.6); }
-.ws.visible { color: #ffffff; }
 .ws.focused { font-weight: bold; }
 
 .ws:hover { background-color: rgba(255, 255, 255, 0.3); }
