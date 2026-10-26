@@ -46,10 +46,16 @@ button {
     transition: background-color 0.15s ease;
 }
 button:hover { background-color: rgba(255, 255, 255, 0.12); }
-button.row .icon { font-size: 16px; min-width: 22px; }
-button.row .detail { color: rgba(255, 255, 255, 0.5); font-size: 10px; }
-button.row.dim { opacity: 0.5; }
-button.row.active .name { font-weight: bold; }
+.row {
+    border-radius: 8px;
+    padding: 4px 8px;
+    transition: background-color 0.15s ease;
+}
+.row.clickable:hover { background-color: rgba(255, 255, 255, 0.12); }
+.row .icon { font-size: 16px; min-width: 22px; }
+.row .detail { color: rgba(255, 255, 255, 0.5); font-size: 10px; }
+.row.dim { opacity: 0.5; }
+.row.active .name { font-weight: bold; }
 button.small { padding: 2px 6px; color: rgba(255, 255, 255, 0.6); }
 button.small:hover { color: #ffffff; }
 entry {
@@ -234,12 +240,15 @@ def section(title):
 
 
 def row(icon, name, detail=None, on_click=None, extra=None, classes=()):
-    """A clickable list row: icon | name + detail | optional extra widgets."""
-    btn = Gtk.Button()
-    ctx = btn.get_style_context()
+    """A clickable list row: icon | name + detail | optional extra widgets.
+
+    Not a Gtk.Button: in GTK3 a button's input window sits on top of its children,
+    so switches and buttons placed inside it would never receive clicks.
+    """
+    box = Gtk.Box(spacing=8)
+    ctx = box.get_style_context()
     for c in ("row", *classes):
         ctx.add_class(c)
-    box = Gtk.Box(spacing=8)
     box.pack_start(label(icon, "icon", xalign=0.5, ellipsize=False), False, False, 0)
     text = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
     text.pack_start(label(name, "name"), False, False, 0)
@@ -247,11 +256,31 @@ def row(icon, name, detail=None, on_click=None, extra=None, classes=()):
         text.pack_start(label(detail, "detail"), False, False, 0)
     box.pack_start(text, True, True, 0)
     for w in extra or ():
+        w.set_valign(Gtk.Align.CENTER)
         box.pack_end(w, False, False, 0)
-    btn.add(box)
+
+    events = Gtk.EventBox()
+    events.set_visible_window(False)
+    events.set_above_child(False)  # child widgets get their own clicks first
+    events.add(box)
     if on_click:
-        btn.connect("clicked", lambda *_: on_click())
-    return btn
+        ctx.add_class("clickable")
+        events.add_events(Gdk.EventMask.ENTER_NOTIFY_MASK | Gdk.EventMask.LEAVE_NOTIFY_MASK)
+
+        def hover(_w, event, on):
+            if event.detail != Gdk.NotifyType.INFERIOR:  # ignore moving onto a child
+                (box.set_state_flags if on else box.unset_state_flags)(Gtk.StateFlags.PRELIGHT, False)
+
+        def release(_w, event):
+            if event.button == 1:
+                on_click()
+            return True
+
+        events.connect("enter-notify-event", hover, True)
+        events.connect("leave-notify-event", hover, False)
+        events.connect("button-release-event", release)
+        events.connect("button-press-event", lambda *_: True)
+    return events
 
 
 def small_button(text, on_click, tooltip=None):

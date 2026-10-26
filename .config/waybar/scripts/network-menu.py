@@ -92,6 +92,7 @@ class NetworkMenu(Popup):
         def changed(ac, state, reason):
             if state == NM.ActiveConnectionState.ACTIVATED:
                 self.busy = None
+                ac.disconnect(handler)  # a later deactivation is a normal disconnect
                 self._schedule()
             elif state == NM.ActiveConnectionState.DEACTIVATED:
                 if delete_on_fail is not None:
@@ -99,7 +100,7 @@ class NetworkMenu(Popup):
                     self._fail(f"Failed to connect to {name} (wrong password?)")
                 else:
                     self._fail(f"Failed to connect to {name}")
-        ac.connect("state-changed", changed)
+        handler = ac.connect("state-changed", changed)
 
     def activate(self, conn):
         name = conn.get_id()
@@ -242,10 +243,16 @@ class NetworkMenu(Popup):
         hotspot_conn = client.get_connection_by_id(HOTSPOT)
         if hotspot_conn:
             hs = next((c for c in conns if c["id"] == HOTSPOT), None)
-            switch = Gtk.Switch(active=hs is not None)
+            starting = self.busy == HOTSPOT
+            switch = Gtk.Switch(active=hs is not None or starting)
             switch.connect("notify::active", self._on_hotspot_toggle, hotspot_conn, hs and hs["active"])
             wireless = hotspot_conn.get_setting_wireless()
-            detail = f"Active · {hs['ip'].split('/')[0]}" if hs else "Off"
+            if starting:
+                detail = "Starting…"
+            elif hs and hs["state"] == NM.ActiveConnectionState.ACTIVATED:
+                detail = f"Active · {hs['ip'].split('/')[0]}"
+            else:
+                detail = "Starting…" if hs else "Off"
             if wireless:
                 detail = f"{ssid_str(wireless.get_ssid())} · {detail}"
             add(section("Hotspot"))
